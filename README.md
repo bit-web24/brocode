@@ -1,3 +1,4 @@
+```code
 [= G <(x y) [xx x] . [yy %% y]
                    . [stdout %%]
                    . [return 1]
@@ -57,4 +58,4 @@
 
 [= int <1x1 dec 0|metadata>];
 [= x <32|int>];
-
+```
