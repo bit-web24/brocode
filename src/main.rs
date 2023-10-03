@@ -1,7 +1,9 @@
 use std::env;
 use std::error::Error;
-use std::fs::{self, File};
-use std::io::Read;
+use std::fs;
+
+mod stdin;
+use stdin::ExpressionReader;
 
 fn main() -> Result<(), Box<dyn Error>> {
     let argv: Vec<String> = env::args().collect();
@@ -22,14 +24,11 @@ fn main() -> Result<(), Box<dyn Error>> {
         return Err(format!("File '{}' does not exist", filename).into());
     }
 
-    let mut file = File::open(&absolute_file_path)?;
-    let mut contents = String::new();
+    let reader = ExpressionReader::new(&absolute_file_path)?;
 
-    if let Err(e) = file.read_to_string(&mut contents) {
-        return Err(format!("Error reading file: {}", e).into());
+    for expression in reader {
+        println!("{}", ExpressionReader::process_expression(expression));
     }
-
-    println!("{}:\n{}", filename, contents);
 
     Ok(())
 }
