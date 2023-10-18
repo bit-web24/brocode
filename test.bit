@@ -1,6 +1,5 @@
-```code
 [= G <(x y) [flow [xx x] [yy %% y]
-                   		 [stdout %%]
+		                 [stdout %%]
                     	 [return 1]
 			]
      |fn (matrix 1x1 dec , matrix 1x1 dec) matrix 1x1 dec>
@@ -58,4 +57,3 @@
 
 [= int <matrix 1x1 dec|metadata>];
 [= x <32|int>];
-```

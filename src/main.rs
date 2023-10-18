@@ -3,7 +3,11 @@ use std::error::Error;
 use std::fs;
 
 mod stdin;
-use stdin::ExpressionReader;
+use stdin::Expression;
+use stdin::SourceCode;
+
+mod lexer;
+//use lexer::{tokenize, Token};
 
 fn main() -> Result<(), Box<dyn Error>> {
     let argv: Vec<String> = env::args().collect();
@@ -24,10 +28,11 @@ fn main() -> Result<(), Box<dyn Error>> {
         return Err(format!("File '{}' does not exist", filename).into());
     }
 
-    let reader = ExpressionReader::new(&absolute_file_path)?;
+    let source_code = SourceCode::new(&absolute_file_path)?;
 
-    for expression in reader {
-        println!("{}", ExpressionReader::process_expression(expression));
+    for expression in source_code {
+        //let tokens: Result<Vec<Token>> = tokenize(Expression::trim(expression))?;
+		println!("{:#?}", String::from_utf8_lossy(&Expression::trim(expression)).to_string());
     }
 
     Ok(())
