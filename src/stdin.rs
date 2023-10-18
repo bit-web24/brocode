@@ -2,13 +2,13 @@ use std::fs::File;
 use std::io::{self, Read};
 
 pub struct Expression {
-    buffer: Vec<u8>
+    buffer: Vec<u8>,
 }
 
 impl Expression {
-	pub fn new() -> Self {
-		Expression { buffer: Vec::new() }
-	}
+    pub fn new() -> Self {
+        Expression { buffer: Vec::new() }
+    }
 
     pub fn trim(expression: Expression) -> Vec<u8> {
         let mut new_expr: Vec<u8> = Vec::new();
@@ -20,22 +20,22 @@ impl Expression {
                 if space_count <= 1 {
                     new_expr.push(b' ');
                 }
-			} else {
+            } else {
                 new_expr.push(c);
                 space_count = 0;
             }
         }
 
-		if let Some(b' ') = new_expr.first() {
-        	new_expr.remove(0);
-		}
+        if let Some(b' ') = new_expr.first() {
+            new_expr.remove(0);
+        }
 
-		return new_expr;
+        return new_expr;
     }
 }
 
 pub struct SourceCode {
-	file: File,
+    file: File,
 }
 
 impl SourceCode {
@@ -49,7 +49,7 @@ impl Iterator for SourceCode {
     type Item = Expression;
 
     fn next(&mut self) -> Option<Self::Item> {
-		let mut expression: Expression = Expression::new();
+        let mut expression: Expression = Expression::new();
 
         loop {
             let mut byte = [0; 1];

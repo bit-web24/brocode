@@ -32,7 +32,10 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     for expression in source_code {
         //let tokens: Result<Vec<Token>> = tokenize(Expression::trim(expression))?;
-		println!("{:#?}", String::from_utf8_lossy(&Expression::trim(expression)).to_string());
+        println!(
+            "{:#?}",
+            String::from_utf8_lossy(&Expression::trim(expression)).to_string()
+        );
     }
 
     Ok(())
