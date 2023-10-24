@@ -32,7 +32,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     for expression in source_code {
         let tokens: Vec<Token> = tokenize(Expression::trim(expression))?;
-		println!("{:#?}", tokens);
+        println!("{:#?}", tokens);
     }
 
     Ok(())
