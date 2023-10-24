@@ -1,98 +1,44 @@
-mod stdin;
-use stdin::Expression;
+use crate::stdin::Expression;
+use std::error::Error;
+use std::fmt;
 
-pub fn tokenize(expression: Expression) -> Result<Vec<Token>, error::Error> {
-	// code to tokenize an expression
+pub mod token;
+use token::{Kind, Lexeme, Location, Token};
+
+#[derive(Debug)]
+struct TokenizationError {
+    message: String,
 }
 
-
-#[derive(Debug, Clone, PartialEq)]
-struct Token {
-	lexeme: Lexeme,
-	location: Location,
-	kind: Kind,
+impl TokenizationError {
+    fn new(message: &str) -> Self {
+        TokenizationError {
+            message: message.to_string(),
+        }
+    }
 }
 
-struct Lexeme {
-	value: String,
+impl Error for TokenizationError {}
+
+impl fmt::Display for TokenizationError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "Tokenization Error: {}", self.message)
+    }
 }
 
-#[derive(Debug, Clone, PartialEq)]
-struct Location {
-	pub line: usize,
-	pub column: usize,
-	pub len: usize,
-}
+pub fn tokenize(expression: Expression) -> Result<Vec<Token>, Box<dyn Error>> {
+    let mut tokens: Vec<Token> = Vec::new();
+    tokens.push(Token {
+        lexeme: Lexeme {
+            value: String::from("lambda"),
+        },
+        location: Location {
+            line: 2,
+            column: 5,
+            len: 6,
+        },
+        kind: Kind::Name,
+    });
 
-#[derive(Debug, Clone, PartialEq)]
-enum Kind {
-	FnBegin,
-	FnName(FnType),
-	Argument(Data),
-	FnEnd,
+    Ok(tokens)
 }
-
-enum FnType {
-	UserDefined(String),
-	BuiltIn(BuiltInFnType),
-}
-
-enum BuiltInFnType {
-	General, // Need to define General functions
-	Operator(Operator),
-	Functionality(Functionality),
-}
-
-enum Functionality {
-	FnFlow,
-	IfElse,
-	Loop,
-}
-
-enum Operator {
-	Arithmetic(ArithmeticOperator),
-	Assignment(AssignmentOperator),
-	Comparison(ComparisonOperator),
-	Logical(LogicalOperator),
-	Bitwise(BitwiseOperator),
-}
-
-enum ArithmeticOperator {
-	Addition, // +
-	Subtraction, // -
-	Multiplication, // *
-	Division, // /
-}
-
-enum AssignmentOperator {
-	Assign, // =
-	AddAssign, // +=
-	SubAssign, // -=
-	MulAssign, // *=
-	DivAssign, // /=
-}
-
-enum ComparisonOperator {
-	Equal, // ==
-	NotEqual, // !=
-	GreaterThan, // >
-	LessThan, // <
-	GreatorThanOrEqual, // >=
-	LessThanOrEqual, // <=
-}
-
-enum LogicalOperator {
-	LogicalAnd, // &&
-	LogicalOr, // ||
-	LogicalNot, // !!
-}
-
-enum BitwiseOperator {
-	BitwiseAnd, // &
-	BitwiseOr, // |
-	BitwiseNot, // !
-	BitwiseXOr, // ^
-	BitwiseLeftShift, // <<
-	BitwiseRightShift, // >>
-}
-

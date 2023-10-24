@@ -7,7 +7,7 @@ use stdin::Expression;
 use stdin::SourceCode;
 
 mod lexer;
-//use lexer::{tokenize, Token};
+use lexer::{token::Token, tokenize};
 
 fn main() -> Result<(), Box<dyn Error>> {
     let argv: Vec<String> = env::args().collect();
@@ -31,11 +31,8 @@ fn main() -> Result<(), Box<dyn Error>> {
     let source_code = SourceCode::new(&absolute_file_path)?;
 
     for expression in source_code {
-        //let tokens: Result<Vec<Token>> = tokenize(Expression::trim(expression))?;
-        println!(
-            "{:#?}",
-            String::from_utf8_lossy(&Expression::trim(expression).unwrap()).to_string()
-        );
+        let tokens: Vec<Token> = tokenize(Expression::trim(expression))?;
+		println!("{:#?}", tokens);
     }
 
     Ok(())

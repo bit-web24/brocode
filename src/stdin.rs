@@ -33,9 +33,9 @@ impl Expression {
         return Self { buffer: new_buffer };
     }
 
-	pub fn unwrap(self) -> Vec<u8> {
-		return self.buffer
-	}
+    pub fn unwrap(self) -> Vec<u8> {
+        return self.buffer;
+    }
 }
 
 pub struct SourceCode {
