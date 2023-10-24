@@ -1,13 +1,11 @@
 pub struct Data {
     pub metadata: MetaData,
-    pub value: String,
+    pub value: Value,
 }
 
 pub enum MetaData {
-    FnSig(Vec<MetaData>, Box<MetaData>),
-    FnRef,
-    FnInv,
-    Matrix(Dimension, DataType),
+    FunctionSign(Vec<MetaData>, Box<MetaData>),
+    MatrixSign(Dimension, DataType),
 }
 
 pub struct Dimension {
@@ -16,10 +14,59 @@ pub struct Dimension {
 }
 
 pub enum DataType {
+	Num(Number),
+    Str,
+    Chr,
+}
+
+enum Number {
     Dec,
     Hex,
     Bin,
     Oct,
-    Str,
-    Chr,
+}
+
+pub struct Value {
+	FunctionSign(Parameters, RawFunction),
+	Matrix(Vec<Vec<Box<dyn UnitVal>>>),
+}
+
+trait UnitVal;
+
+pub enum Datum {
+	Chr(CharVal),
+	Num(NumVal),
+}
+
+impl UnitVal for Datum;
+
+pub struct CharVal {
+	value: Char,
+}
+
+enum NumVal {
+    Dec(f64),
+    Hex(String),
+    Bin(u64),
+    Oct(u64),
+}
+
+pub struct Str {
+	value: Vec<CharVal>
+}
+
+impl UnitVal for Str;
+
+pub struct Parameters {
+	value: Vec<String>,
+}
+
+pub struct RawFunction {
+	ByCall(Function),
+	ByRef(String),
+}
+
+pub struct Function {
+	Name: String,
+	Args: Vec<RawFunction>
 }
