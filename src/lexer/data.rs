@@ -26,22 +26,22 @@ enum Number {
     Oct,
 }
 
-pub struct Value {
+pub enum Value {
 	FunctionSign(Parameters, RawFunction),
 	Matrix(Vec<Vec<Box<dyn UnitVal>>>),
 }
 
-trait UnitVal;
+trait UnitVal {}
 
 pub enum Datum {
 	Chr(CharVal),
 	Num(NumVal),
 }
 
-impl UnitVal for Datum;
+impl UnitVal for Datum {}
 
 pub struct CharVal {
-	value: Char,
+	value: char,
 }
 
 enum NumVal {
@@ -52,21 +52,21 @@ enum NumVal {
 }
 
 pub struct Str {
-	value: Vec<CharVal>
+	value: Vec<CharVal>,
 }
 
-impl UnitVal for Str;
+impl UnitVal for Str {}
 
 pub struct Parameters {
 	value: Vec<String>,
 }
 
-pub struct RawFunction {
+pub enum RawFunction {
 	ByCall(Function),
 	ByRef(String),
 }
 
 pub struct Function {
 	Name: String,
-	Args: Vec<RawFunction>
+	Args: Vec<RawFunction>,
 }
