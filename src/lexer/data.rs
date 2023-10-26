@@ -14,7 +14,7 @@ pub struct Dimension {
 }
 
 pub enum DataType {
-	Num(Number),
+    Num(Number),
     Str,
     Chr,
 }
@@ -27,21 +27,21 @@ enum Number {
 }
 
 pub enum Value {
-	FunctionSign(Parameters, RawFunction),
-	Matrix(Vec<Vec<Box<dyn UnitVal>>>),
+    FunctionSign(Parameters, RawFunction),
+    Matrix(Vec<Vec<Box<dyn UnitVal>>>),
 }
 
 trait UnitVal {}
 
 pub enum Datum {
-	Chr(CharVal),
-	Num(NumVal),
+    Chr(CharVal),
+    Num(NumVal),
 }
 
 impl UnitVal for Datum {}
 
 pub struct CharVal {
-	value: char,
+    value: char,
 }
 
 enum NumVal {
@@ -52,21 +52,21 @@ enum NumVal {
 }
 
 pub struct Str {
-	value: Vec<CharVal>,
+    value: Vec<CharVal>,
 }
 
 impl UnitVal for Str {}
 
 pub struct Parameters {
-	value: Vec<String>,
+    value: Vec<String>,
 }
 
 pub enum RawFunction {
-	ByCall(Function),
-	ByRef(String),
+    ByCall(Function),
+    ByRef(String),
 }
 
 pub struct Function {
-	Name: String,
-	Args: Vec<RawFunction>,
+    Name: String,
+    Args: Vec<RawFunction>,
 }
