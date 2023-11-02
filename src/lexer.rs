@@ -10,7 +10,7 @@ use token::{kind::Kind, Token};
 pub fn tokenize(expression: Expression) -> Result<Vec<Token>, Box<dyn Error>> {
     let mut tokens: Vec<Token> = Vec::new();
     for (lexeme, location) in expression {
-        let kind: Kind = Kind::get_kind(&lexeme);
+        let kind: Kind = Kind::get(&lexeme);
         let token = Token {
             lexeme,
             location,

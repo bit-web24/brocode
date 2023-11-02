@@ -9,7 +9,11 @@ pub enum Kind {
 }
 
 impl Kind {
-    pub fn get_kind(lexeme: &Lexeme) -> Self {
+    pub fn get(lexeme: &Lexeme) -> Self {
+        if let Some(kind) = SeperatorKind::get(&lexeme) {
+            return Kind::Seperator(kind);
+        }
+        
         return Kind::Name;
     }
 }
@@ -34,14 +38,36 @@ pub enum SeperatorKind {
     ArgsSeperator,     //
     FnEnd,             // ]
     DataBegin,         // <
-    DataumSeperator,   // ,
+    ParamsAndValueSeperator,   // ,
     MetaDataSeperator, // |
     DataEnd,           // >
     ListBegin,         // {
     ListEnd,           // }
     ParamBegin,        // (
     ParamEnd,          // )
-    ParamsSeperator,   // ,
+}
+
+impl SeperatorKind {
+    pub fn get(lexeme: &Lexeme) -> Option<Self> {
+        use SeperatorKind::*;
+        let value: &str = &lexeme.value;
+        let kind: Option<SeperatorKind> = match value {
+            "[" => Some(FnBegin),
+            " " => Some(ArgsSeperator),
+            "]" => Some(FnEnd),
+            "<" => Some(DataBegin),
+            "," => Some(ParamsAndValueSeperator),
+            "|" => Some(MetaDataSeperator),
+            ">" => Some(DataEnd),
+            "{" => Some(ListBegin),
+            "}" => Some(ListEnd),
+            "(" => Some(ParamBegin),
+            ")" => Some(ParamEnd),
+            _ => None,
+        };
+
+        return kind;
+    }
 }
 
 #[derive(Debug)]
