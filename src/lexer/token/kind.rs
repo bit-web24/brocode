@@ -13,38 +13,51 @@ impl Kind {
         if let Some(kind) = SeperatorKind::get(&lexeme) {
             return Kind::Seperator(kind);
         }
-        
+        if let Some(kind) = DataKind::get(&lexeme) {
+            return Kind::Data(kind);
+        }
+
         return Kind::Name;
     }
 }
 
 #[derive(Debug)]
 pub enum DataKind {
-    Number(NumKind),
+    Number,
     Chr,
 }
 
-#[derive(Debug)]
-pub enum NumKind {
-    Dec,
-    Hex,
-    Bin,
-    Oct,
+impl DataKind {
+    pub fn get(lexeme: &Lexeme) -> Option<Self> {
+        use DataKind::*;
+        let mut data_iter = lexeme.value.chars();
+        if lexeme.value.len() == 3
+            && data_iter.nth(0) == Some('\'')
+            && data_iter.last() == Some('\'')
+        {
+            return Some(Chr);
+        }
+        if let Ok(_) = lexeme.value.parse::<i32>() {
+            return Some(Number);
+        }
+
+        None
+    }
 }
 
 #[derive(Debug)]
 pub enum SeperatorKind {
-    FnBegin,           // [
-    ArgsSeperator,     //
-    FnEnd,             // ]
-    DataBegin,         // <
-    ParamsAndValueSeperator,   // ,
-    MetaDataSeperator, // |
-    DataEnd,           // >
-    ListBegin,         // {
-    ListEnd,           // }
-    ParamBegin,        // (
-    ParamEnd,          // )
+    FnBegin,                 // [
+    ArgsSeperator,           //
+    FnEnd,                   // ]
+    DataBegin,               // <
+    ParamsAndValueSeperator, // ,
+    MetaDataSeperator,       // |
+    DataEnd,                 // >
+    ListBegin,               // {
+    ListEnd,                 // }
+    ParamBegin,              // (
+    ParamEnd,                // )
 }
 
 impl SeperatorKind {
