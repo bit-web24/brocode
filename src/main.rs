@@ -2,12 +2,11 @@ use std::env;
 use std::error::Error;
 use std::fs;
 
-mod stdin;
-use stdin::Expression;
-use stdin::SourceCode;
-
 mod lexer;
-use lexer::{token::Token, tokenize};
+mod stdin;
+
+use lexer::{expr::Expression, token::Token, tokenize};
+use stdin::SourceCode;
 
 fn main() -> Result<(), Box<dyn Error>> {
     let argv: Vec<String> = env::args().collect();
@@ -31,6 +30,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let source_code = SourceCode::new(&absolute_file_path)?;
 
     for expression in source_code {
+        // println!("{:?}",  String::from_utf8_lossy(&Expression::trim(expression).unwrap()).to_string());
         let tokens: Vec<Token> = tokenize(Expression::trim(expression))?;
         println!("{:#?}", tokens);
     }
