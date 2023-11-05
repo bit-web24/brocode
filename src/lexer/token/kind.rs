@@ -7,6 +7,7 @@ pub enum Kind {
     Function(FnType),
     Name,
     Data(DataKind),
+    Metadata(MetadataKind),
 }
 
 impl Kind {
@@ -16,6 +17,9 @@ impl Kind {
         }
         if let Some(kind) = DataKind::get(&lexeme) {
             return Some(Self::Data(kind));
+        }
+        if let Some(kind) = MetadataKind::get(&lexeme) {
+            return Some(Self::Metadata(kind));
         }
         let re = Regex::new(r"^\$[a-z_A-Z\d]+$").unwrap();
         if re.is_match(&lexeme.value) {
@@ -30,6 +34,70 @@ impl Kind {
 }
 
 #[derive(Debug)]
+pub enum MetadataKind {
+    DataType(DataType),
+    ContainerType(ContainerType),
+    Dimension,
+}
+
+impl MetadataKind {
+    pub fn get(lexeme: &Lexeme) -> Option<Self> {
+        let re = Regex::new(r"^\dx\d$").unwrap();
+        if re.is_match(&lexeme.value) {
+            return Some(Self::Dimension);
+        }
+        if let Some(typ) = ContainerType::get(&lexeme) {
+            return Some(Self::ContainerType(typ));
+        }
+        if let Some(typ) = DataType::get(&lexeme) {
+            return Some(Self::DataType(typ));
+        }
+
+        None
+    }
+}
+
+#[derive(Debug)]
+pub enum ContainerType {
+    Matrix,
+    Function,
+}
+
+impl ContainerType {
+    pub fn get(lexeme: &Lexeme) -> Option<Self> {
+        let val: &str = &lexeme.value;
+        use ContainerType::*;
+        let typ = match val {
+            "matrix" => Some(Matrix),
+            "fn" => Some(Function),
+            _ => None,
+        };
+
+        return typ;
+    }
+}
+
+#[derive(Debug)]
+pub enum DataType {
+    Character,
+    Decimal,
+}
+
+impl DataType {
+    pub fn get(lexeme: &Lexeme) -> Option<Self> {
+        let val: &str = &lexeme.value;
+        use DataType::*;
+        let typ = match val {
+            "char" => Some(Character),
+            "dec" => Some(Decimal),
+            _ => None,
+        };
+
+        return typ;
+    }
+}
+
+#[derive(Debug)]
 pub enum DataKind {
     Number,
     Chr,
@@ -38,7 +106,7 @@ pub enum DataKind {
 impl DataKind {
     pub fn get(lexeme: &Lexeme) -> Option<Self> {
         use DataKind::*;
-        let re = Regex::new(r"^'.'$").unwrap();
+        let re = Regex::new(r"^'[^']*'$").unwrap();
         if re.is_match(&lexeme.value) {
             return Some(Chr);
         }
