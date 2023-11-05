@@ -1,4 +1,4 @@
-use super::token::{lexeme::Lexeme, location::Location};
+use super::token::lexeme::Lexeme;
 
 pub struct Expression {
     pub buffer: Vec<u8>,
@@ -45,11 +45,10 @@ impl Expression {
 }
 
 impl Iterator for Expression {
-    type Item = (Lexeme, Location);
+    type Item = Lexeme;
 
     fn next(&mut self) -> Option<Self::Item> {
         let mut lexeme = Lexeme::new();
-        let location = Location::new();
 
         while self.cursor < self.buffer.len() {
             let ch = self.buffer[self.cursor] as char;
@@ -58,7 +57,7 @@ impl Iterator for Expression {
                 _ if ch.is_whitespace() => {
                     self.cursor += 1;
                     if !lexeme.value.is_empty() {
-                        return Some((lexeme, location));
+                        return Some(lexeme);
                     }
                 }
                 _ if "[{(<|,>)}]".contains(ch) => {
@@ -66,7 +65,7 @@ impl Iterator for Expression {
                         lexeme.value.push(ch);
                         self.cursor += 1;
                     }
-                    return Some((lexeme, location));
+                    return Some(lexeme);
                 }
                 _ => {
                     lexeme.value.push(ch);
