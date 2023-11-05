@@ -229,6 +229,7 @@ pub enum Functionality {
     FnFlow,
     IfElse,
     Loop,
+    InPlace,
 }
 
 impl Functionality {
@@ -238,6 +239,7 @@ impl Functionality {
             "@" => Some(Self::Loop),
             "~" => Some(Self::FnFlow),
             ":?" => Some(Self::IfElse),
+            "%%" => Some(Self::InPlace),
             _ => None,
         };
 
