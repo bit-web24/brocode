@@ -30,7 +30,6 @@ fn main() -> Result<(), Box<dyn Error>> {
     let source_code = SourceCode::new(&absolute_file_path)?;
 
     for expression in source_code {
-        // println!("{:?}",  String::from_utf8_lossy(&Expression::trim(expression).unwrap()).to_string());
         let tokens: Vec<Token> = tokenize(Expression::trim(expression))?;
         println!("{:#?}", tokens);
     }

@@ -3,6 +3,7 @@ pub mod error;
 pub mod expr;
 pub mod token;
 
+use error::{ErrorType, TokenizationError};
 use expr::Expression;
 use std::error::Error;
 use token::{kind::Kind, Token};
@@ -15,10 +16,9 @@ pub fn tokenize(expression: Expression) -> Result<Vec<Token>, Box<dyn Error>> {
                 let token = Token { lexeme, kind };
                 tokens.push(token);
             }
-            None => continue,
-            // None => {
-            //     return Err(Box::new(error::LexicalError(lexeme)));
-            // }
+            None => {
+                return Err(Box::new(TokenizationError::new(lexeme, ErrorType::InvalidToken)));
+            }
         }
     }
 
