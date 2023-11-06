@@ -1,8 +1,11 @@
 use super::token::lexeme::Lexeme;
 
+#[derive(Debug)]
 pub struct Expression {
     pub buffer: Vec<u8>,
     pub cursor: usize,
+    line: usize,
+    column: usize,
 }
 
 impl Expression {
@@ -10,33 +13,9 @@ impl Expression {
         Self {
             buffer: Vec::new(),
             cursor: 0,
+            line: 1,
+            column: 1,
         }
-    }
-
-    pub fn trim(expression: Self) -> Self {
-        let mut new_buffer: Vec<u8> = Vec::new();
-        let mut space_count = 0;
-
-        for c in expression.buffer {
-            if c == b' ' || c == b'\n' || c == b'\t' {
-                space_count += 1;
-                if space_count <= 1 {
-                    new_buffer.push(b' ');
-                }
-            } else {
-                new_buffer.push(c);
-                space_count = 0;
-            }
-        }
-
-        if let Some(b' ') = new_buffer.first() {
-            new_buffer.remove(0);
-        }
-
-        return Self {
-            buffer: new_buffer,
-            cursor: 0,
-        };
     }
 
     pub fn unwrap(self) -> Vec<u8> {
@@ -52,28 +31,46 @@ impl Iterator for Expression {
 
         while self.cursor < self.buffer.len() {
             let ch = self.buffer[self.cursor] as char;
+            self.cursor += 1;
 
             match ch {
-                _ if ch.is_whitespace() => {
-                    self.cursor += 1;
+                ' ' => {
                     if !lexeme.value.is_empty() {
+                        lexeme.location.column = self.column;
+                        lexeme.location.line = self.line;
+                        lexeme.location.len = lexeme.value.len();
                         return Some(lexeme);
                     }
                 }
-                _ if "[{(<|,>)}]".contains(ch) => {
+                '\t' | '\n' => {
+                    if ch == '\n' {
+                        self.line += 1;
+                        self.column = 1;
+                    }
+                }
+                ch if "[{(<|,>)}]".contains(ch) => {
                     if lexeme.value.is_empty() {
                         lexeme.value.push(ch);
-                        self.cursor += 1;
+                        lexeme.location.column = self.column;
+                        lexeme.location.line = self.line;
+                        lexeme.location.len = 1;
+                        return Some(lexeme);
                     }
-                    return Some(lexeme);
                 }
                 _ => {
                     lexeme.value.push(ch);
-                    self.cursor += 1;
+                    self.column += 1;
                 }
             }
         }
 
-        None
+        if !lexeme.value.is_empty() {
+            lexeme.location.column = self.column;
+            lexeme.location.line = self.line;
+            lexeme.location.len = lexeme.value.len();
+            Some(lexeme)
+        } else {
+            None
+        }
     }
 }

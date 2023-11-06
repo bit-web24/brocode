@@ -30,7 +30,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let source_code = SourceCode::new(&absolute_file_path)?;
 
     for expression in source_code {
-        let tokens: Vec<Token> = tokenize(Expression::trim(expression))?;
+        let tokens: Vec<Token> = tokenize(expression)?;
         println!("{:#?}", tokens);
     }
 
