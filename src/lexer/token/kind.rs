@@ -81,6 +81,9 @@ impl ContainerType {
 pub enum DataType {
     Character,
     Decimal,
+    Octal,
+    Binary,
+    Hexadecimal,
 }
 
 impl DataType {
@@ -90,6 +93,9 @@ impl DataType {
         let typ = match val {
             "char" => Some(Character),
             "dec" => Some(Decimal),
+            "oct" => Some(Octal),
+            "bin" => Some(Binary),
+            "hex" => Some(Hexadecimal),
             _ => None,
         };
 
