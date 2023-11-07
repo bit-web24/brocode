@@ -84,6 +84,7 @@ pub enum DataType {
     Octal,
     Binary,
     Hexadecimal,
+    Boolean,
 }
 
 impl DataType {
@@ -96,6 +97,7 @@ impl DataType {
             "oct" => Some(Octal),
             "bin" => Some(Binary),
             "hex" => Some(Hexadecimal),
+            "bool" => Some(Boolean),
             _ => None,
         };
 
