@@ -5,7 +5,7 @@ use std::fs;
 mod lexer;
 mod stdin;
 
-use lexer::{expr::Expression, token::Token, tokenize};
+use lexer::{token::Token, tokenize};
 use stdin::SourceCode;
 
 fn main() -> Result<(), Box<dyn Error>> {

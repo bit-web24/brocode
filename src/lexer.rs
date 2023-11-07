@@ -17,7 +17,10 @@ pub fn tokenize(expression: Expression) -> Result<Vec<Token>, Box<dyn Error>> {
                 tokens.push(token);
             }
             None => {
-                return Err(Box::new(TokenizationError::new(lexeme, ErrorType::InvalidToken)));
+                return Err(Box::new(TokenizationError::new(
+                    lexeme,
+                    ErrorType::InvalidToken,
+                )));
             }
         }
     }

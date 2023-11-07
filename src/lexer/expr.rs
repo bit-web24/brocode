@@ -18,8 +18,8 @@ impl Expression {
         }
     }
 
-    pub fn unwrap(self) -> Vec<u8> {
-        return self.buffer;
+    pub fn unwrap(self) -> String {
+        return String::from_utf8_lossy(&self.buffer).to_string();
     }
 }
 
@@ -31,46 +31,47 @@ impl Iterator for Expression {
 
         while self.cursor < self.buffer.len() {
             let ch = self.buffer[self.cursor] as char;
-            self.cursor += 1;
 
             match ch {
                 ' ' => {
-                    if !lexeme.value.is_empty() {
-                        lexeme.location.column = self.column;
+                    if lexeme.value.is_empty() {
+                        self.column += 1;
+                        self.cursor += 1;
+                    } else {
                         lexeme.location.line = self.line;
                         lexeme.location.len = lexeme.value.len();
+                        lexeme.location.column = self.column - lexeme.location.len;
                         return Some(lexeme);
                     }
                 }
-                '\t' | '\n' => {
-                    if ch == '\n' {
-                        self.line += 1;
-                        self.column = 1;
-                    }
+                '\t' => {
+                    self.column += 1;
+                    self.cursor += 1;
                 }
-                ch if "[{(<|,>)}]".contains(ch) => {
+                '\n' => {
+                    self.line += 1;
+                    self.column = 1;
+                    self.cursor += 1;
+                }
+                _ if "[{(<|,>)}]".contains(ch) => {
                     if lexeme.value.is_empty() {
                         lexeme.value.push(ch);
-                        lexeme.location.column = self.column;
-                        lexeme.location.line = self.line;
-                        lexeme.location.len = 1;
-                        return Some(lexeme);
+                        self.cursor += 1;
+                        self.column += 1;
                     }
+                    lexeme.location.line = self.line;
+                    lexeme.location.len = lexeme.value.len();
+                    lexeme.location.column = self.column - lexeme.location.len;
+                    return Some(lexeme);
                 }
                 _ => {
                     lexeme.value.push(ch);
+                    self.cursor += 1;
                     self.column += 1;
                 }
             }
         }
 
-        if !lexeme.value.is_empty() {
-            lexeme.location.column = self.column;
-            lexeme.location.line = self.line;
-            lexeme.location.len = lexeme.value.len();
-            Some(lexeme)
-        } else {
-            None
-        }
+        None
     }
 }
