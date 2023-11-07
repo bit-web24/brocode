@@ -109,6 +109,7 @@ impl DataType {
 pub enum DataKind {
     Number(NumKind),
     Chr,
+    Bool(BoolKind),
 }
 
 impl DataKind {
@@ -121,8 +122,29 @@ impl DataKind {
         if let Some(numkind) = NumKind::get(&lexeme) {
             return Some(Number(numkind));
         }
+        if let Some(boolkind) = BoolKind::get(&lexeme) {
+            return Some(Bool(boolkind));
+        }
 
         None
+    }
+}
+
+#[derive(Debug)]
+pub enum BoolKind {
+    True,
+    False,
+}
+
+impl BoolKind {
+    pub fn get(lexeme: &Lexeme) -> Option<Self> {
+        use BoolKind::*;
+        let val: &str = &lexeme.value;
+        match val {
+            "true" => Some(True),
+            "false" => Some(False),
+            _ => None,
+        }
     }
 }
 
