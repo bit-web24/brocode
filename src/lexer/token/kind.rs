@@ -105,7 +105,7 @@ impl DataType {
 
 #[derive(Debug)]
 pub enum DataKind {
-    Number,
+    Number(NumKind),
     Chr,
 }
 
@@ -116,8 +116,40 @@ impl DataKind {
         if re.is_match(&lexeme.value) {
             return Some(Chr);
         }
-        if let Ok(_) = lexeme.value.parse::<i32>() {
-            return Some(Number);
+        if let Some(numkind) = NumKind::get(&lexeme) {
+            return Some(Number(numkind));
+        }
+
+        None
+    }
+}
+
+#[derive(Debug)]
+pub enum NumKind {
+    Hexadecimal,
+    Decimal,
+    Octal,
+    Binary,
+}
+
+impl NumKind {
+    pub fn get(lexeme: &Lexeme) -> Option<Self> {
+        use NumKind::*;
+        let mut re = Regex::new(r"^0[xX][0-9a-fA-F]+$").unwrap();
+        if re.is_match(&lexeme.value) {
+            return Some(Hexadecimal);
+        }
+        re = Regex::new(r"^0d[0-9]+$").unwrap();
+        if re.is_match(&lexeme.value) {
+            return Some(Decimal);
+        }
+        re = Regex::new(r"^0o[0-7]+$").unwrap();
+        if re.is_match(&lexeme.value) {
+            return Some(Octal);
+        }
+        re = Regex::new(r"^0b[01]+$").unwrap();
+        if re.is_match(&lexeme.value) {
+            return Some(Binary);
         }
 
         None
