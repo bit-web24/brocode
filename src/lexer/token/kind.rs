@@ -163,7 +163,7 @@ impl NumKind {
         if re.is_match(&lexeme.value) {
             return Some(Hexadecimal);
         }
-        re = Regex::new(r"^(:?0d)?[0-9]+$").unwrap();
+        re = Regex::new(r"^(:?0d)?[0-9\.]+$").unwrap();
         if re.is_match(&lexeme.value) {
             return Some(Decimal);
         }
