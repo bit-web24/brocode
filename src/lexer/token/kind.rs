@@ -38,13 +38,18 @@ pub enum MetadataKind {
     DataType(DataType),
     ContainerType(ContainerType),
     Dimension,
+    Index,
 }
 
 impl MetadataKind {
     pub fn get(lexeme: &Lexeme) -> Option<Self> {
-        let re = Regex::new(r"^[1-9]x[1-9]$").unwrap();
+        let mut re = Regex::new(r"^[1-9]x[1-9]$").unwrap();
         if re.is_match(&lexeme.value) {
             return Some(Self::Dimension);
+        }
+        re = Regex::new(r"^#[0-9]+$").unwrap();
+        if re.is_match(&lexeme.value) {
+            return Some(Self::Index);
         }
         if let Some(typ) = ContainerType::get(&lexeme) {
             return Some(Self::ContainerType(typ));
