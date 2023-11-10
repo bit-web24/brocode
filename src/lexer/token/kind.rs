@@ -42,7 +42,7 @@ pub enum MetadataKind {
 
 impl MetadataKind {
     pub fn get(lexeme: &Lexeme) -> Option<Self> {
-        let re = Regex::new(r"^\dx\d$").unwrap();
+        let re = Regex::new(r"^[1-9]x[1-9]$").unwrap();
         if re.is_match(&lexeme.value) {
             return Some(Self::Dimension);
         }
@@ -61,6 +61,7 @@ impl MetadataKind {
 pub enum ContainerType {
     Matrix,
     Function,
+    Array,
 }
 
 impl ContainerType {
@@ -70,6 +71,7 @@ impl ContainerType {
         let typ = match val {
             "matrix" => Some(Matrix),
             "fn" => Some(Function),
+            "array" => Some(Array),
             _ => None,
         };
 
