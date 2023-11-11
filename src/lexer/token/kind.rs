@@ -6,6 +6,7 @@ pub enum Kind {
     Seperator(SeperatorKind),
     Function(FnType),
     Name,
+    Param,
     Data(DataKind),
     Metadata(MetadataKind),
 }
@@ -21,7 +22,11 @@ impl Kind {
         if let Some(kind) = MetadataKind::get(&lexeme) {
             return Some(Self::Metadata(kind));
         }
-        let re = Regex::new(r"^\$[a-z_A-Z\d]+$").unwrap();
+        let mut re = Regex::new(r"^\$[a-zA-Z\d]+$").unwrap();
+        if re.is_match(&lexeme.value) {
+            return Some(Self::Param);
+        }
+        re = Regex::new(r"^[a-z_A-Z]+\d+?$").unwrap();
         if re.is_match(&lexeme.value) {
             return Some(Self::Name);
         }
@@ -227,7 +232,6 @@ impl SeperatorKind {
 
 #[derive(Debug)]
 pub enum FnType {
-    UserDefined,
     BuiltIn(BuiltInFnType),
 }
 
@@ -235,10 +239,6 @@ impl FnType {
     pub fn get(lexeme: &Lexeme) -> Option<Self> {
         if let Some(builtin_type) = BuiltInFnType::get(&lexeme) {
             return Some(Self::BuiltIn(builtin_type));
-        }
-        let re = Regex::new(r"^[a-z_A-Z]+\d*$").unwrap();
-        if re.is_match(&lexeme.value) {
-            return Some(Self::UserDefined);
         }
 
         None
