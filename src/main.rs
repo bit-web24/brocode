@@ -3,9 +3,11 @@ use std::error::Error;
 use std::fs;
 
 mod lexer;
+mod parser;
 mod stdin;
 
 use lexer::{token::Token, tokenize};
+use parser::{ParseTree, Parser};
 use stdin::SourceCode;
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -31,7 +33,8 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     for expression in source_code {
         let tokens: Vec<Token> = tokenize(expression)?;
-        println!("{:#?}", tokens);
+        let parse_tree: ParseTree = Parser::parse_syntax(&tokens)?;
+        println!("{:#?}", parse_tree);
     }
 
     Ok(())

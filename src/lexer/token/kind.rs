@@ -26,7 +26,7 @@ impl Kind {
         if re.is_match(&lexeme.value) {
             return Some(Self::Param);
         }
-        re = Regex::new(r"^[a-z_A-Z]+\d+?$").unwrap();
+        re = Regex::new(r"^[a-z_A-Z]+$").unwrap();
         if re.is_match(&lexeme.value) {
             return Some(Self::Name);
         }
