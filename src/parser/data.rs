@@ -1,4 +1,4 @@
-use super::ParseTree;
+use super::AbstractSyntaxTree;
 use crate::lexer::token::Token;
 use std::fmt;
 
@@ -43,7 +43,7 @@ enum Number {
 
 #[derive(Debug)]
 pub enum Value<'a> {
-    FunctionSign(Parameters, Box<ParseTree<'a>>),
+    FunctionSign(Parameters, Box<AbstractSyntaxTree<'a>>),
     UnitVal(Option<Box<dyn UnitVal>>),
     Vector(Option<Vec<Box<dyn UnitVal>>>),
     Matrix(Option<Vec<Vec<Box<dyn UnitVal>>>>),

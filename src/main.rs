@@ -7,7 +7,7 @@ mod parser;
 mod stdin;
 
 use lexer::{token::Token, tokenize};
-use parser::{ParseTree, Parser};
+use parser::{AbstractSyntaxTree, Parser};
 use stdin::SourceCode;
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -33,8 +33,8 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     for expression in source_code {
         let tokens: Vec<Token> = tokenize(expression)?;
-        let parse_tree: ParseTree = Parser::parse_syntax(&tokens)?;
-        println!("{:#?}", parse_tree);
+        let ast: AbstractSyntaxTree = Parser::parse(&tokens)?;
+        Parser::validate(&ast)?;
     }
 
     Ok(())

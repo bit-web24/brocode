@@ -9,28 +9,24 @@ use data::Data;
 pub struct Parser {}
 
 impl Parser {
-    pub fn parse_syntax(tokens: &Vec<Token>) -> Result<ParseTree, Box<dyn Error>> {
-        let mut parse_tree = ParseTree::new(&tokens[1]);
-        // for field in get_fields(tokens)? {
-        //     parse_tree.join(field)?
-        // }
-        Ok(parse_tree)
+    // Performs Syntax Analysis
+    pub fn parse(tokens: &Vec<Token>) -> Result<AbstractSyntaxTree, Box<dyn Error>> {
+        let n = tokens.len();
+        if tokens[0] != '[' || tokens[n-1] != ']' {
+            return Err(error("unbalanced brackets"));
+        }
+
+        Ok(...)
     }
+
+    // Performs Semantic Analysis
+    pub fn validate(ast: &AbstractSyntaxTree) -> Result<(), Box<dyn Error>> {}
 }
 
 #[derive(Debug)]
-pub struct ParseTree<'a> {
+pub struct AbstractSyntaxTree<'a> {
     fn_name: &'a Token,
     args: Option<Vec<Arg<'a>>>,
-}
-
-impl ParseTree<'_> {
-    pub fn new(fn_name: &Token) -> ParseTree<'_> {
-        return ParseTree {
-            fn_name,
-            args: None,
-        };
-    }
 }
 
 #[derive(Debug)]
@@ -38,5 +34,5 @@ enum Arg<'a> {
     Name,
     Data(Data<'a>),
     Index,
-    FnCall(ParseTree<'a>),
+    FnCall(AbstractSyntaxTree<'a>),
 }
