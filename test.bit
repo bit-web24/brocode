@@ -1,45 +1,75 @@
-[= G <($x $y) [~ [xx $x] [yy [%%] $y]
-                [* 2 3]
-                [stdout [%%]]
-                [return 0x80]
-            ]
-    |   fn (dec , dec) hex>
-];
+# Numbers
+(assign decimal-number 243.34);
+(assign hexadecimal-number 0x234A34);
+(assign octadecimal-number 0o3466);
+(assign binary-number 0b101001);
 
-[= F <($x $y) [~ [y 23 x] [stdout [%%]]
-                        [return 1]
-            ] | fn (dec , fn (dec, dec) hex) dec>
-];
+# Arithmetic Operators
+(add 2 2)
+(sub 4 6)
+(mul 3 3)
+(div 9 3)
 
-[F 24 G];
+# Array/List
+(assign one-dim-array [1, 3, 5, 7, 9, 11, 13])
+(assign two-dim-array [[1, 2, 3, 4, 5, 6, 7, 8]
+                  [3, 4, 5, 6, 7, 8, 8, 9]]
+)
 
-[= buf <{1, 2, 3, 3, 5, 5}| array #5 dec>];
+# Boolean
+(assign bool-true true)
+(assign bool-false false)
 
-[= d <243.34|dec>];
-[= h 0x234A34];
-[= o <0o3466|oct>];
-[= b <0b101001|bin>];
+# Char/String
+(assign character 'B')
+(assign char-array ['s', 't', 'r', 'i', 'n', 'g'])
+(assign my-name "bittu kumar")
 
-[= dd <{{1, 2, 3, 4, 5, 6, 7, 8}
-       {3, 4, 5, 6, 7, 8, 8, 9}}|matrix 2x8 dec>
-];
+# Conditionals
+(if-else (== 20 20) (print "both are equal")
+    (print "both are not equal")
+)
 
-[= a <true|bool>];
-[= b <false|bool>];
-[= c <{'s', 't', 'r', 'i', 'n', 'g', '\0'} | array #7 char>];
-[= ch 'B'];
+(x (assert-eq 2 2))
+(y (assert-ne 3 1))
+(and (x) (y))
+(or (x) (y))
+(not (x))
 
-[~ [GET c 1] [stdout [%%]]];
-[SET c #4 'y'];
-[SET dd 1x2 4545];
-[pop dd #2];
+# Pattern Matching
+(match 
+  (case (assert-eq num 1) (print "number is 1"))
+  (case (assert-eq num 2) (print "number is 2"))
+  (case (assert-eq num 3) (print "number is 3"))
+  (case (assert-eq num 4) (print "number is 4"))
+)
 
-[PUSH dd #0 <300|dec>];
+# Iterator
+(assign counter 0)
+(iter (less-than counter 10)
+      (print (counter)
+      (increment counter 1)
+)
 
-[SET XX [# [+ 4 [rows dd]]] 434];
+# Begin: creates a new scope
+(begin
+  (print "hello")
+  (print "how are")
+  (print "you!")
+)
 
-[G [GET dd #1] [GET dd #3]];
+# Functions
+(fn function-name (callable param-x param-y
+    (begin
+       (char-array param-x)
+       (print (%%))
 
-[:? [&& [< [GET dd #2] 23]  [== 43 43]]
-    [~ [G 23] [continue]]
-];
+       (two-dim-array param-x param-y)
+       (return (%%))
+    )
+  )
+)
+
+(function-name 1 4)
+(print (function-name))
+
