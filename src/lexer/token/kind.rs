@@ -6,9 +6,7 @@ pub enum Kind {
     Seperator(SeperatorKind),
     Function(FnType),
     Name,
-    Param,
     Data(DataKind),
-    Metadata(MetadataKind),
 }
 
 impl Kind {
@@ -19,101 +17,15 @@ impl Kind {
         if let Some(kind) = DataKind::get(&lexeme) {
             return Some(Self::Data(kind));
         }
-        if let Some(kind) = MetadataKind::get(&lexeme) {
-            return Some(Self::Metadata(kind));
-        }
-        let mut re = Regex::new(r"^\$[a-zA-Z\d]+$").unwrap();
-        if re.is_match(&lexeme.value) {
-            return Some(Self::Param);
-        }
-        re = Regex::new(r"^[a-z_A-Z]+$").unwrap();
-        if re.is_match(&lexeme.value) {
-            return Some(Self::Name);
-        }
         if let Some(kind) = FnType::get(&lexeme) {
             return Some(Self::Function(kind));
         }
-
-        None
-    }
-}
-
-#[derive(Debug)]
-pub enum MetadataKind {
-    DataType(DataType),
-    ContainerType(ContainerType),
-    Dimension,
-    Index,
-}
-
-impl MetadataKind {
-    pub fn get(lexeme: &Lexeme) -> Option<Self> {
-        let mut re = Regex::new(r"^[1-9]x[1-9]$").unwrap();
+        let re = Regex::new(r"^[a-z]+(?:-[a-z]+)*$").unwrap();
         if re.is_match(&lexeme.value) {
-            return Some(Self::Dimension);
-        }
-        re = Regex::new(r"^#[0-9]+$").unwrap();
-        if re.is_match(&lexeme.value) {
-            return Some(Self::Index);
-        }
-        if let Some(typ) = ContainerType::get(&lexeme) {
-            return Some(Self::ContainerType(typ));
-        }
-        if let Some(typ) = DataType::get(&lexeme) {
-            return Some(Self::DataType(typ));
+            return Some(Self::Name);
         }
 
         None
-    }
-}
-
-#[derive(Debug)]
-pub enum ContainerType {
-    Matrix,
-    Function,
-    Array,
-}
-
-impl ContainerType {
-    pub fn get(lexeme: &Lexeme) -> Option<Self> {
-        let val: &str = &lexeme.value;
-        use ContainerType::*;
-        let typ = match val {
-            "matrix" => Some(Matrix),
-            "fn" => Some(Function),
-            "array" => Some(Array),
-            _ => None,
-        };
-
-        return typ;
-    }
-}
-
-#[derive(Debug)]
-pub enum DataType {
-    Character,
-    Decimal,
-    Octal,
-    Binary,
-    Hexadecimal,
-    Boolean,
-}
-
-impl DataType {
-    pub fn get(lexeme: &Lexeme) -> Option<Self> {
-        let val: &str = &lexeme.value;
-        use DataType::*;
-        let typ = match val {
-            "char" => Some(Character),
-            "dec" => Some(Decimal),
-            "oct" => Some(Octal),
-            "bin" => Some(Binary),
-            "hex" => Some(Hexadecimal),
-            "bool" => Some(Boolean),
-            _ => None,
-        };
-
-        return typ;
     }
 }
 
@@ -175,7 +87,7 @@ impl NumKind {
         if re.is_match(&lexeme.value) {
             return Some(Hexadecimal);
         }
-        re = Regex::new(r"^(:?0d)?[0-9\.]+$").unwrap();
+        re = Regex::new(r"^(:?0d)?[0-9]+$").unwrap();
         if re.is_match(&lexeme.value) {
             return Some(Decimal);
         }
@@ -194,17 +106,12 @@ impl NumKind {
 
 #[derive(Debug)]
 pub enum SeperatorKind {
-    FnBegin,                 // [
-    ArgsSeperator,           //
-    FnEnd,                   // ]
-    DataBegin,               // <
-    ParamsAndValueSeperator, // ,
-    MetaDataSeperator,       // |
-    DataEnd,                 // >
-    ListBegin,               // {
-    ListEnd,                 // }
-    ParamBegin,              // (
-    ParamEnd,                // )
+    FnBegin,        // (
+    ArgsSeperator,  //
+    FnEnd,          // )
+    ValueSeperator, // ,
+    ListBegin,      // [
+    ListEnd,        // ]
 }
 
 impl SeperatorKind {
@@ -212,17 +119,12 @@ impl SeperatorKind {
         use SeperatorKind::*;
         let value: &str = &lexeme.value;
         let kind: Option<SeperatorKind> = match value {
-            "[" => Some(FnBegin),
+            "(" => Some(FnBegin),
             " " => Some(ArgsSeperator),
-            "]" => Some(FnEnd),
-            "<" => Some(DataBegin),
-            "," => Some(ParamsAndValueSeperator),
-            "|" => Some(MetaDataSeperator),
-            ">" => Some(DataEnd),
-            "{" => Some(ListBegin),
-            "}" => Some(ListEnd),
-            "(" => Some(ParamBegin),
-            ")" => Some(ParamEnd),
+            ")" => Some(FnEnd),
+            "," => Some(ValueSeperator),
+            "[" => Some(ListBegin),
+            "]" => Some(ListEnd),
             _ => None,
         };
 
@@ -232,60 +134,42 @@ impl SeperatorKind {
 
 #[derive(Debug)]
 pub enum FnType {
-    BuiltIn(BuiltInFnType),
+    Io(Iotype),
+    Operator(OperatorType),
+    ControlFlow(FlowType),
 }
 
 impl FnType {
     pub fn get(lexeme: &Lexeme) -> Option<Self> {
-        if let Some(builtin_type) = BuiltInFnType::get(&lexeme) {
-            return Some(Self::BuiltIn(builtin_type));
+        if let Some(func) = Iotype::get(&lexeme) {
+            return Some(Self::Io(func));
         }
-
-        None
-    }
-}
-
-#[derive(Debug)]
-pub enum BuiltInFnType {
-    General(General),
-    Operator(Operator),
-    Functionality(Functionality),
-}
-
-impl BuiltInFnType {
-    pub fn get(lexeme: &Lexeme) -> Option<Self> {
-        if let Some(operator) = Operator::get(&lexeme) {
+        if let Some(operator) = OperatorType::get(&lexeme) {
             return Some(Self::Operator(operator));
         }
-        if let Some(func) = Functionality::get(&lexeme) {
-            return Some(Self::Functionality(func));
+        if let Some(flowtype) = FlowType::get(&lexeme) {
+            return Some(Self::ControlFlow(flowtype));
         }
-        if let Some(func) = General::get(&lexeme) {
-            return Some(Self::General(func));
-        }
+
         None
     }
 }
 
 #[derive(Debug)]
-pub enum General {
-    Break,
-    Continue,
-    Return,
-    Stdout,
-    Stdin,
+pub enum Iotype {
+    Input,
+    Print,
+    Error,
 }
 
-impl General {
+impl Iotype {
     pub fn get(lexeme: &Lexeme) -> Option<Self> {
         let value: &str = &lexeme.value;
-        use General::*;
+        use Iotype::*;
         let typ = match value {
-            "break" => Some(Break),
-            "continue" => Some(Continue),
-            "return" => Some(Return),
-            "stdout" => Some(Stdout),
-            "stdin" => Some(Stdin),
+            "input" => Some(Input),
+            "print" => Some(Print),
+            "error" => Some(Error),
             _ => None,
         };
 
@@ -294,21 +178,57 @@ impl General {
 }
 
 #[derive(Debug)]
-pub enum Functionality {
+pub enum FlowType {
     FnFlow,
     IfElse,
     Loop,
     InPlace,
+    Match,
+    Case,
+    Interceptor(FlowInterceptor),
 }
 
-impl Functionality {
+impl FlowType {
     pub fn get(lexeme: &Lexeme) -> Option<Self> {
         let value: &str = &lexeme.value;
+        use FlowType::*;
+        let mut typ = match value {
+            "loop" => Some(Loop),
+            "begin" => Some(FnFlow),
+            "if-else" => Some(IfElse),
+            "match" => Some(Match),
+            "case" => Some(Case),
+            "%%" => Some(InPlace),
+            _ => None,
+        };
+
+        if let None = typ {
+            if let Some(interceptor_type) = FlowInterceptor::get(&lexeme) {
+                typ = Some(Self::Interceptor(interceptor_type));
+            }
+        }
+
+        return typ;
+    }
+}
+
+#[derive(Debug)]
+pub enum FlowInterceptor {
+    Break,
+    Continue,
+    Return,
+    Exit,
+}
+
+impl FlowInterceptor {
+    pub fn get(lexeme: &Lexeme) -> Option<Self> {
+        let value: &str = &lexeme.value;
+        use FlowInterceptor::*;
         let typ = match value {
-            "@" => Some(Self::Loop),
-            "~" => Some(Self::FnFlow),
-            ":?" => Some(Self::IfElse),
-            "%%" => Some(Self::InPlace),
+            "break" => Some(Break),
+            "continue" => Some(Continue),
+            "return" => Some(Return),
+            "exit" => Some(Exit),
             _ => None,
         };
 
@@ -317,7 +237,7 @@ impl Functionality {
 }
 
 #[derive(Debug)]
-pub enum Operator {
+pub enum OperatorType {
     Arithmetic(ArithmeticOperator),
     Assignment(AssignmentOperator),
     Comparison(ComparisonOperator),
@@ -325,7 +245,7 @@ pub enum Operator {
     Bitwise(BitwiseOperator),
 }
 
-impl Operator {
+impl OperatorType {
     pub fn get(lexeme: &Lexeme) -> Option<Self> {
         if let Some(kind) = ArithmeticOperator::get(&lexeme) {
             return Some(Self::Arithmetic(kind));
@@ -360,10 +280,10 @@ impl ArithmeticOperator {
         use ArithmeticOperator::*;
         let value: &str = &lexeme.value;
         let kind: Option<ArithmeticOperator> = match value {
-            "+" => Some(Addition),
-            "-" => Some(Subtraction),
-            "*" => Some(Multiplication),
-            "/" => Some(Division),
+            "add" => Some(Addition),
+            "sub" => Some(Subtraction),
+            "mul" => Some(Multiplication),
+            "div" => Some(Division),
             _ => None,
         };
 
@@ -385,11 +305,11 @@ impl AssignmentOperator {
         use AssignmentOperator::*;
         let value: &str = &lexeme.value;
         let kind: Option<AssignmentOperator> = match value {
-            "=" => Some(Assign),
-            "+=" => Some(AddAssign),
-            "-=" => Some(SubAssign),
-            "*=" => Some(MulAssign),
-            "/=" => Some(DivAssign),
+            "assign" => Some(Assign),
+            "add-by" => Some(AddAssign),
+            "sub-by" => Some(SubAssign),
+            "mul-by" => Some(MulAssign),
+            "div-by" => Some(DivAssign),
             _ => None,
         };
 
@@ -412,12 +332,12 @@ impl ComparisonOperator {
         use ComparisonOperator::*;
         let value: &str = &lexeme.value;
         let kind: Option<ComparisonOperator> = match value {
-            "==" => Some(Equal),
-            "!=" => Some(NotEqual),
-            ">" => Some(GreaterThan),
-            "<" => Some(LessThan),
-            ">=" => Some(GreatorThanOrEqual),
-            "<=" => Some(LessThanOrEqual),
+            "assert-eq" => Some(Equal),
+            "assert_ne" => Some(NotEqual),
+            "assert_gt" => Some(GreaterThan),
+            "assert_lt" => Some(LessThan),
+            "assert_ge" => Some(GreatorThanOrEqual),
+            "assert_le" => Some(LessThanOrEqual),
             _ => None,
         };
 
@@ -437,9 +357,9 @@ impl LogicalOperator {
         use LogicalOperator::*;
         let value: &str = &lexeme.value;
         let kind: Option<LogicalOperator> = match value {
-            "&&" => Some(LogicalAnd),
-            "||" => Some(LogicalOr),
-            "!!" => Some(LogicalNot),
+            "and" => Some(LogicalAnd),
+            "or" => Some(LogicalOr),
+            "not" => Some(LogicalNot),
             _ => None,
         };
 
@@ -462,12 +382,12 @@ impl BitwiseOperator {
         use BitwiseOperator::*;
         let value: &str = &lexeme.value;
         let kind: Option<BitwiseOperator> = match value {
-            "&" => Some(BitwiseAnd),
-            "|" => Some(BitwiseOr),
-            "!" => Some(BitwiseNot),
-            "^" => Some(BitwiseXOr),
-            "<<" => Some(BitwiseLeftShift),
-            ">>" => Some(BitwiseRightShift),
+            "bitwise-and" => Some(BitwiseAnd),
+            "bitwise-or" => Some(BitwiseOr),
+            "bitwise-not" => Some(BitwiseNot),
+            "bitwise-xor" => Some(BitwiseXOr),
+            "bitwise-ls" => Some(BitwiseLeftShift),
+            "bitwise-rs" => Some(BitwiseRightShift),
             _ => None,
         };
 

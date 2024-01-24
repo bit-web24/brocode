@@ -7,12 +7,12 @@ mod data;
 use data::Data;
 
 pub struct Parser {}
-
+/*
 impl Parser {
     // Performs Syntax Analysis
     pub fn parse(tokens: &Vec<Token>) -> Result<AbstractSyntaxTree, Box<dyn Error>> {
         let n = tokens.len();
-        if tokens[0] != '[' || tokens[n-1] != ']' {
+        if tokens[0] != '(' || tokens[n-1] != ')' {
             return Err(error("unbalanced brackets"));
         }
 
@@ -22,7 +22,7 @@ impl Parser {
     // Performs Semantic Analysis
     pub fn validate(ast: &AbstractSyntaxTree) -> Result<(), Box<dyn Error>> {}
 }
-
+*/
 #[derive(Debug)]
 pub struct AbstractSyntaxTree<'a> {
     fn_name: &'a Token,

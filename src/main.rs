@@ -33,8 +33,10 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     for expression in source_code {
         let tokens: Vec<Token> = tokenize(expression)?;
-        let ast: AbstractSyntaxTree = Parser::parse(&tokens)?;
+        /*let ast: AbstractSyntaxTree = Parser::parse(&tokens)?;
         Parser::validate(&ast)?;
+        */
+        println!("{:#?}", tokens);
     }
 
     Ok(())

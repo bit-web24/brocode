@@ -1,64 +1,54 @@
-# Numbers
-(assign decimal-number 243.34);
+(assign decimal-number 243);
 (assign hexadecimal-number 0x234A34);
 (assign octadecimal-number 0o3466);
 (assign binary-number 0b101001);
 
-# Arithmetic Operators
-(add 2 2)
-(sub 4 6)
-(mul 3 3)
-(div 9 3)
+(add 2 2);
+(sub 4 6);
+(mul 3 3);
+(div 9 3);
 
-# Array/List
-(assign one-dim-array [1, 3, 5, 7, 9, 11, 13])
+(assign one-dim-array [1, 3, 5, 7, 9, 11, 13]);
 (assign two-dim-array [[1, 2, 3, 4, 5, 6, 7, 8]
                   [3, 4, 5, 6, 7, 8, 8, 9]]
-)
+);
 
-# Boolean
-(assign bool-true true)
-(assign bool-false false)
+(assign bool-true true);
+(assign bool-false false);
 
-# Char/String
-(assign character 'B')
-(assign char-array ['s', 't', 'r', 'i', 'n', 'g'])
-(assign my-name "bittu kumar")
+(assign character 'B');
+(assign char-array ['s', 't', 'r', 'i', 'n', 'g']);
+(assign my-name "bittu kumar");
 
-# Conditionals
-(if-else (== 20 20) (print "both are equal")
+(if-else (assert-eq 20 20) (print "both are equal")
     (print "both are not equal")
-)
+);
 
-(x (assert-eq 2 2))
-(y (assert-ne 3 1))
-(and (x) (y))
-(or (x) (y))
-(not (x))
+(assign x (assert-eq 2 2));
+(assign y (assert-ne 3 1));
+(and x y);
+(or x y);
+(not x);
 
-# Pattern Matching
-(match 
+(match
   (case (assert-eq num 1) (print "number is 1"))
   (case (assert-eq num 2) (print "number is 2"))
   (case (assert-eq num 3) (print "number is 3"))
   (case (assert-eq num 4) (print "number is 4"))
-)
+);
 
-# Iterator
-(assign counter 0)
-(iter (less-than counter 10)
-      (print (counter)
+(assign counter 0);
+(loop (less-than counter 10)
+      (print counter)
       (increment counter 1)
-)
+);
 
-# Begin: creates a new scope
 (begin
   (print "hello")
   (print "how are")
   (print "you!")
-)
+);
 
-# Functions
 (fn function-name (callable param-x param-y
     (begin
        (char-array param-x)
@@ -68,8 +58,8 @@
        (return (%%))
     )
   )
-)
+);
 
-(function-name 1 4)
-(print (function-name))
+(assign val (function-name 1 4));
+(print val);
 
