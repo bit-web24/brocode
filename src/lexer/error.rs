@@ -30,5 +30,5 @@ impl Display for TokenizationError {
 }
 
 fn message(error_t: ErrorType, lexeme: Lexeme) -> String {
-    format!("{:?}(\"{}\")", error_t, lexeme.value)
+    format!("<{:?} -> {}>", error_t, lexeme.value)
 }

@@ -33,15 +33,20 @@ impl Kind {
 pub enum DataKind {
     Number(NumKind),
     Chr,
+    Str,
     Bool(BoolKind),
 }
 
 impl DataKind {
     pub fn get(lexeme: &Lexeme) -> Option<Self> {
         use DataKind::*;
-        let re = Regex::new(r"^'[^']*'$").unwrap();
+        let mut re = Regex::new(r"^'[^']*'$").unwrap();
         if re.is_match(&lexeme.value) {
             return Some(Chr);
+        }
+        re = Regex::new(r#"^".*"$"#).unwrap();
+        if re.is_match(&lexeme.value) {
+            return Some(Str);
         }
         if let Some(numkind) = NumKind::get(&lexeme) {
             return Some(Number(numkind));
