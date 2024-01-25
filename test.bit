@@ -1,53 +1,53 @@
-(assign decimal-number 243);
-(assign hexadecimal-number 0x234A34);
-(assign octadecimal-number 0o3466);
-(assign binary-number 0b101001);
+(assign decimal-number 243)
+(assign hexadecimal-number 0x234A34)
+(assign octadecimal-number 0o3466)
+(assign binary-number 0b101001)
 
-(add 2 2);
-(sub 4 6);
-(mul 3 3);
-(div 9 3);
+(add 2 2)
+(sub 4 6)
+(mul 3 3)
+(div 9 3)
 
-(assign one-dim-array [1, 3, 5, 7, 9, 11, 13]);
+(assign one-dim-array [1, 3, 5, 7, 9, 11, 13])
 (assign two-dim-array [[1, 2, 3, 4, 5, 6, 7, 8]
                   [3, 4, 5, 6, 7, 8, 8, 9]]
-);
+)
 
-(assign bool-true true);
-(assign bool-false false);
+(assign bool-true true)
+(assign bool-false false)
 
-(assign character 'B');
-(assign char-array ['s', 't', 'r', 'i', 'n', 'g']);
-(assign my-name "bittu kumar");
+(assign character 'B')
+(assign char-array ['s', 't', 'r', 'i', 'n', 'g'])
+(assign my-name "bittu kumar")
 
 (if-else (assert-eq 20 20) (print "both are equal")
     (print "both are not equal")
-);
+)
 
-(assign x (assert-eq 2 2));
-(assign y (assert-ne 3 1));
-(and x y);
-(or x y);
-(not x);
+(assign x (assert-eq 2 2))
+(assign y (assert-ne 3 1))
+(and x y)
+(or x y)
+(not x)
 
 (match
   (case (assert-eq num 1) (print "number is 1"))
   (case (assert-eq num 2) (print "number is 2"))
   (case (assert-eq num 3) (print "number is 3"))
   (case (assert-eq num 4) (print "number is 4"))
-);
+)
 
-(assign counter 0);
+(assign counter 0)
 (loop (less-than counter 10)
       (print counter)
       (increment counter 1)
-);
+)
 
 (begin
   (print "hello")
   (print "how are")
   (print "you!")
-);
+)
 
 (fn function-name (callable param-x param-y
     (begin
@@ -58,8 +58,8 @@
        (return (%%))
     )
   )
-);
+)
 
-(assign val (function-name 1 4));
-(print val);
+(assign val (function-name 1 4))
+(print val)
 

@@ -18,26 +18,29 @@ impl Iterator for SourceCode {
 
     fn next(&mut self) -> Option<Self::Item> {
         let mut expression: Expression = Expression::new();
+        let mut stack: Vec<char> = Vec::new();
 
         loop {
             let mut byte = [0; 1];
             match self.file.read_exact(&mut byte) {
                 Ok(_) => {
-                    if byte[0] == b';' {
-                        if !expression.buffer.is_empty() {
-                            return Some(expression);
-                        }
-                    } else {
-                        expression.buffer.push(byte[0]);
+                    if "\t\n".contains(byte[0] as char) {
+                        continue;
                     }
-                }
-                Err(_) => {
-                    if !expression.buffer.is_empty() {
+
+                    expression.buffer.push(byte[0]);
+                    if byte[0] == b'(' {
+                        stack.push('(');
+                    } else if byte[0] == b')' {
+                        stack.pop();
+                    }
+
+                    if stack.is_empty() {
                         return Some(expression);
-                    } else {
-                        return None;
                     }
                 }
+
+                Err(_) => return None,
             }
         }
     }
