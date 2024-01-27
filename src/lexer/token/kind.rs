@@ -79,34 +79,53 @@ impl BoolKind {
 
 #[derive(Debug)]
 pub enum NumKind {
-    Hexadecimal,
-    Decimal,
-    Octal,
-    Binary,
+    Hexadecimal(Polarity),
+    Decimal(Polarity),
+    Octal(Polarity),
+    Binary(Polarity),
 }
 
 impl NumKind {
     pub fn get(lexeme: &Lexeme) -> Option<Self> {
         use NumKind::*;
-        let mut re = Regex::new(r"^0[xX][0-9a-fA-F]+$").unwrap();
+        use Polarity::*;
+        let mut re = Regex::new(r"^-?0[xX][0-9a-fA-F]+$").unwrap();
         if re.is_match(&lexeme.value) {
-            return Some(Hexadecimal);
+            if *(&lexeme.value.chars().next().unwrap()) == '-' {
+                return Some(Hexadecimal(Negative));
+            }
+            return Some(Hexadecimal(Positive));
         }
         re = Regex::new(r"^-?(:?0d)?[0-9]+$").unwrap();
         if re.is_match(&lexeme.value) {
-            return Some(Decimal);
+            if *(&lexeme.value.chars().next().unwrap()) == '-' {
+                return Some(Decimal(Negative));
+            }
+            return Some(Decimal(Positive));
         }
-        re = Regex::new(r"^0o[0-7]+$").unwrap();
+        re = Regex::new(r"^-?0o[0-7]+$").unwrap();
         if re.is_match(&lexeme.value) {
-            return Some(Octal);
+            if *(&lexeme.value.chars().next().unwrap()) == '-' {
+                return Some(Octal(Negative));
+            }
+            return Some(Octal(Positive));
         }
-        re = Regex::new(r"^0b[01]+$").unwrap();
+        re = Regex::new(r"^-?0b[01]+$").unwrap();
         if re.is_match(&lexeme.value) {
-            return Some(Binary);
+            if *(&lexeme.value.chars().next().unwrap()) == '-' {
+                return Some(Binary(Negative));
+            }
+            return Some(Binary(Positive));
         }
 
         None
     }
+}
+
+#[derive(Debug)]
+pub enum Polarity {
+    Positive,
+    Negative,
 }
 
 #[derive(Debug)]
