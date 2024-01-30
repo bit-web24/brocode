@@ -7,7 +7,7 @@ mod parser;
 mod stdin;
 
 use lexer::{token::Token, tokenize};
-use parser::{AbstractSyntaxTree, Parser};
+use parser::{Node, Parser};
 use stdin::SourceCode;
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -30,13 +30,13 @@ fn main() -> Result<(), Box<dyn Error>> {
     }
 
     let source_code = SourceCode::new(&absolute_file_path)?;
+    let mut AST: Vec<Node> = Vec::new();
 
     for expression in source_code {
         let tokens: Vec<Token> = tokenize(expression)?;
-        /*let ast: AbstractSyntaxTree = Parser::parse(&tokens)?;
-        Parser::validate(&ast)?;
-        */
-        println!("{:#?}", tokens);
+        let node: Node = Parser::parse(&tokens)?;
+        Parser::validate(&node)?;
+        AST.push(node);
     }
 
     Ok(())

@@ -1,38 +1,28 @@
+use crate::lexer::token::kind::Kind;
 use crate::lexer::token::Token;
 use std::error::Error;
 
-mod assert;
-mod data;
-
-use data::Data;
+mod value;
+use value::Value;
 
 pub struct Parser {}
-/*
+
 impl Parser {
     // Performs Syntax Analysis
-    pub fn parse(tokens: &Vec<Token>) -> Result<AbstractSyntaxTree, Box<dyn Error>> {
-        let n = tokens.len();
-        if tokens[0] != '(' || tokens[n-1] != ')' {
-            return Err(error("unbalanced brackets"));
-        }
-
-        Ok(...)
-    }
+    pub fn parse(tokens: &Vec<Token>) -> Result<Node, Box<dyn Error>> {}
 
     // Performs Semantic Analysis
-    pub fn validate(ast: &AbstractSyntaxTree) -> Result<(), Box<dyn Error>> {}
-}
-*/
-#[derive(Debug)]
-pub struct AbstractSyntaxTree<'a> {
-    fn_name: &'a Token,
-    args: Option<Vec<Arg<'a>>>,
+    pub fn validate(ast: &Node) -> Result<(), Box<dyn Error>> {}
 }
 
 #[derive(Debug)]
-enum Arg<'a> {
-    Name,
-    Data(Data<'a>),
-    Index,
-    FnCall(AbstractSyntaxTree<'a>),
+pub struct Node {
+    Type: Kind,
+    Args: Option<Vec<Arg>>,
+}
+
+#[derive(Debug)]
+enum Arg {
+    Val(Value),
+    Ref(Node),
 }
